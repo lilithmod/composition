@@ -1,6 +1,6 @@
 {
-  "name": "@lilithmod/unborn-chat",
-  "version": "0.2",
+  "name": "@lilithmod/composition",
+  "version": "0.3",
   "description": "Write complex Minecraft chat components in Typescript using tagged template literals.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

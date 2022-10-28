@@ -231,10 +231,11 @@ abstract class ComponentBuilder {
 
     extra(extra: ComponentBuilder | ComponentBuilder[]): ComponentBuilder {
         if (extra instanceof ComponentBuilder) {
-            this.iExtra = [extra]
+            if (!Array.isArray(this.iExtra)) this.iExtra = []
+            this.iExtra.push(extra)
             return this
         }
-        this.iExtra = extra
+        this.iExtra = [...this.iExtra, ...extra]
         return this
     }
 }
@@ -244,6 +245,102 @@ export class TextComponentBuilder extends ComponentBuilder {
 
     constructor(text: string) {
         super()
+        for (let i = 0; i < text.length; i++) {
+            if (text[i] === '§' || text[i] === '&') {
+                switch (text[i + 1]) {
+                    case '0':
+                        this.black()
+                        i++
+                        continue
+                    case '1':
+                        this.darkBlue()
+                        i++
+                        continue
+                    case '2':
+                        this.darkGreen()
+                        i++
+                        continue
+                    case '3':
+                        this.darkAqua()
+                        i++
+                        continue
+                    case '4':
+                        this.darkRed()
+                        i++
+                        continue
+                    case '5':
+                        this.darkPurple()
+                        i++
+                        continue
+                    case '6':
+                        this.gold()
+                        i++
+                        continue
+                    case '7':
+                        this.gray()
+                        i++
+                        continue
+                    case '8':
+                        this.darkGray()
+                        i++
+                        continue
+                    case '9':
+                        this.blue()
+                        i++
+                        continue
+                    case 'a':
+                        this.green()
+                        i++
+                        continue
+                    case 'b':
+                        this.aqua()
+                        i++
+                        continue
+                    case 'c':
+                        this.red()
+                        i++
+                        continue
+                    case 'd':
+                        this.lightPurple()
+                        i++
+                        continue
+                    case 'e':
+                        this.yellow()
+                        i++
+                        continue
+                    case 'f':
+                        this.white()
+                        i++
+                        continue
+                    case 'k':
+                        this.obfuscated()
+                        i++
+                        continue
+                    case 'l':
+                        this.bold()
+                        i++
+                        continue
+                    case 'm':
+                        this.strikethrough()
+                        i++
+                        continue
+                    case 'n':
+                        this.underlined()
+                        i++
+                        continue
+                    case 'o':
+                        this.italic()
+                        i++
+                        continue
+                    default:
+                        this.iText = text.substring(i)
+                        return
+                }
+            } else {
+                this.iText = text.substring(i)
+                return
+            }
+        }
         this.iText = text
     }
 
@@ -446,53 +543,44 @@ export class SelectorComponentBuilder extends ComponentBuilder {
     }
 }
 
-function getNext(index: number, strings: TemplateStringsArray, ...tags: (string | ComponentBuilder)[]): ComponentBuilder {
-    let component = tags[index]
-    if (component instanceof ComponentBuilder) {
-        if (index < tags.length - 1) {
-            component.extra(
-                new TextComponentBuilder(strings[index + 1])
-                    .extra(getNext(index + 1, strings, ...tags))
-            )
-        } else if (strings[index + 1] !== '') {
-            component.extra(
-                new TextComponentBuilder(strings[index + 1])
-            )
-        }
-    } else {
-        component = new TextComponentBuilder(component)
-        if (index < tags.length - 1) {
-            component.extra(
-                new TextComponentBuilder(strings[index + 1])
-                    .extra(getNext(index + 1, strings, ...tags))
-            )
-        } else if (strings[index + 1] !== '') {
-            component.extra(
-                new TextComponentBuilder(strings[index + 1])
-            )
-        }
-    }
-    return component
-}
-
 type Formatter = (strings: TemplateStringsArray, ...tags: (string | ComponentBuilder)[]) => ComponentBuilder
 
 export function c(strings: TemplateStringsArray, ...tags: (string | ComponentBuilder)[]): ComponentBuilder {
 
-    const component = new TextComponentBuilder(strings[0])
+    let component: ComponentBuilder = new TextComponentBuilder(strings[0])
+
     if (tags.length > 0) {
-        component.extra(
-            getNext(0, strings, ...tags)
-        )
+
+        for (let i = 0; i < tags.length; i++) {
+
+            if (i === 0 && (component as TextComponentBuilder).iText === '') {
+                let tag = tags[i]
+                if (typeof tag === 'string') {
+                    (component as TextComponentBuilder).iText = tag
+                } else {
+                    component = tag
+                }
+                continue
+            }
+
+            let tag = tags[i]
+            if (typeof tag === 'string') {
+                component.extra(new TextComponentBuilder(tag))
+            } else {
+                component.extra(tag)
+            }
+
+            if (!(strings[i + 1] === '' && i + 1 === strings.length - 1)) component.extra(new TextComponentBuilder(strings[i + 1]))
+        }
     } else if (strings.length > 1) {
         const newStrings = [...strings]
-        const first = newStrings.shift()
-        if (first === '') {
-            component.iText = newStrings.shift()
-        }
-        for (const str of newStrings) {
-            component.extra(new TextComponentBuilder(str))
-        }
+            const first = newStrings.shift()
+            if (first === '') {
+                (component as TextComponentBuilder).iText = newStrings.shift()
+            }
+            for (let i = 0; i < newStrings.length; i++) {
+                if (!(newStrings[i] === '' && i === newStrings.length - 1)) component.extra(new TextComponentBuilder(newStrings[i]))
+            }
     }
 
     return component
@@ -686,9 +774,8 @@ export function suggest(strings: TemplateStringsArray, ...tags: (string | Compon
     return c(strings, ...tags).clickEvent('suggest_command', command)
 }
 
-export function page(strings: TemplateStringsArray, ...tags: (string | ComponentBuilder)[]): ComponentBuilder {
-    const page = tags.shift()
-    return c(strings, ...tags).clickEvent('change_page', page)
+export function page(strings: TemplateStringsArray, index: number, ...tags: (string | ComponentBuilder)[]): ComponentBuilder {
+    return c(strings, ...tags).clickEvent('change_page', index)
 }
 
 export function copy(strings: TemplateStringsArray, ...tags: (string | ComponentBuilder)[]): ComponentBuilder {
