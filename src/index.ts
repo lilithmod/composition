@@ -213,7 +213,7 @@ abstract class ComponentBuilder {
         return this.clickEvent('open_file', path)
     }
 
-    text(text: string): ComponentBuilder {
+    hover(text: string): ComponentBuilder {
         return this.hoverEvent('show_text', text)
     }
 
@@ -475,6 +475,8 @@ function getNext(index: number, strings: TemplateStringsArray, ...tags: (string 
     return component
 }
 
+type Formatter = (strings: TemplateStringsArray, ...tags: (string | ComponentBuilder)[]) => ComponentBuilder
+
 export function c(strings: TemplateStringsArray, ...tags: (string | ComponentBuilder)[]): ComponentBuilder {
 
     const component = new TextComponentBuilder(strings[0])
@@ -482,25 +484,88 @@ export function c(strings: TemplateStringsArray, ...tags: (string | ComponentBui
         component.extra(
             getNext(0, strings, ...tags)
         )
+    } else if (strings.length > 1) {
+        const newStrings = [...strings]
+        const first = newStrings.shift()
+        if (first === '') {
+            component.iText = newStrings.shift()
+        }
+        for (const str of newStrings) {
+            component.extra(new TextComponentBuilder(str))
+        }
     }
 
     return component
 
 }
 
+export function cx(...formats: Formatter[]): Formatter {
+    return (strings: TemplateStringsArray, ...tags: (string | ComponentBuilder)[]) => {
+        const component = c(strings, ...tags)
+        for (const format of formats) {
+            if (format === red) {
+                component.red()
+            } else if (format === blue) {
+                component.blue()
+            } else if (format === green) {
+                component.green()
+            } else if (format === yellow) {
+                component.yellow()
+            } else if (format === aqua) {
+                component.aqua()
+            } else if (format === gray) {
+                component.gray()
+            } else if (format === darkRed) {
+                component.darkRed()
+            } else if (format === darkBlue) {
+                component.darkBlue()
+            } else if (format === darkGreen) {
+                component.darkGreen()
+            } else if (format === darkAqua) {
+                component.darkAqua()
+            } else if (format === darkGray) {
+                component.darkGray()
+            } else if (format === black) {
+                component.black()
+            } else if (format === white) {
+                component.white()
+            } else if (format === gold) {
+                component.gold()
+            } else if (format === darkPurple) {
+                component.darkPurple()
+            } else if (format === lightPurple) {
+                component.lightPurple()
+            } else if (format === bold) {
+                component.bold()
+            } else if (format === italic) {
+                component.italic()
+            } else if (format === underlined) {
+                component.underlined()
+            } else if (format === strikethrough) {
+                component.strikethrough()
+            } else if (format === obfuscated) {
+                component.obfuscated()
+            } else if (format === reset) {
+                component.reset()
+            }
+        }
+        return component
+    }
+}
+
 export function t(strings: TemplateStringsArray, ...tags: (string | ComponentBuilder)[]): ComponentBuilder {
     return new TranslatableComponentBuilder(strings[0].trim()).with(...tags)
 }
 
-export function k(strings: TemplateStringsArray, ...tags: (string | ComponentBuilder)[]): ComponentBuilder {
-    return new KeybindComponentBuilder(`key.${strings[0].trim()}`)
+export function key(key: string): KeybindComponentBuilder {
+    return new KeybindComponentBuilder(key)
 }
 
-export function sel(strings: TemplateStringsArray): ComponentBuilder {
-    return new SelectorComponentBuilder(strings[0].trim())
+export function sel(selector: string): SelectorComponentBuilder {
+    return new SelectorComponentBuilder(selector)
 }
 
-export function score(name: string, objective: string, value?: string): ComponentBuilder {
+export function score(name: string, objective: string, value?: string): ScoreComponentBuilder {
     const component = new ScoreComponentBuilder(name, objective)
     if (value != null) component.value(value)
     return component
