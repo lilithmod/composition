@@ -237,7 +237,7 @@ category('Formatting Shortcuts', () => {
 
 category('Insertion and Event Shortcuts', () => {
     test('shortcut insertion text component', () => {
-        const one = insert`${'test'}Hello world`.json()
+        const one = insert`${'test'} Hello world`.json()
         isComponent(one)
         isTextComponent(one)
         a.isExactly(one.text, 'Hello world')
@@ -245,7 +245,7 @@ category('Insertion and Event Shortcuts', () => {
     })
 
     test('shortcut link text component', () => {
-        const one = link`${'https://example.com'}Hello world`.json()
+        const one = link`${'https://example.com'} Hello world`.json()
         isComponent(one)
         isTextComponent(one)
         a.isExactly(one.text, 'Hello world')
@@ -254,7 +254,7 @@ category('Insertion and Event Shortcuts', () => {
     })
 
     test('shortcut run command text component', () => {
-        const one = cmd`${'/test'}Hello world`.json()
+        const one = cmd`${'/test'} Hello world`.json()
         isComponent(one)
         isTextComponent(one)
         a.isExactly(one.text, 'Hello world')
@@ -263,7 +263,7 @@ category('Insertion and Event Shortcuts', () => {
     })
 
     test('shortcut suggest command text component', () => {
-        const one = suggest`${'/test'}Hello world`.json()
+        const one = suggest`${'/test'} Hello world`.json()
         isComponent(one)
         isTextComponent(one)
         a.isExactly(one.text, 'Hello world')
@@ -272,7 +272,7 @@ category('Insertion and Event Shortcuts', () => {
     })
 
     test('shortcut change page text component', () => {
-        const one = page`${1}Hello world`.json()
+        const one = page`${1} Hello world`.json()
         isComponent(one)
         isTextComponent(one)
         a.isExactly(one.text, 'Hello world')
@@ -281,7 +281,7 @@ category('Insertion and Event Shortcuts', () => {
     })
 
     test('shortcut copy to clipboard text component', () => {
-        const one = copy`${'test'}Hello world`.json()
+        const one = copy`${'test'} Hello world`.json()
         isComponent(one)
         isTextComponent(one)
         a.isExactly(one.text, 'Hello world')
@@ -290,7 +290,7 @@ category('Insertion and Event Shortcuts', () => {
     })
 
     test('shortcut twitch user text component', () => {
-        const one = twitch`${'test'}Hello world`.json()
+        const one = twitch`${'test'} Hello world`.json()
         isComponent(one)
         isTextComponent(one)
         a.isExactly(one.text, 'Hello world')
@@ -299,7 +299,7 @@ category('Insertion and Event Shortcuts', () => {
     })
 
     test('shortcut open file text component', () => {
-        const one = file`${'test'}Hello world`.json()
+        const one = file`${'test'} Hello world`.json()
         isComponent(one)
         isTextComponent(one)
         a.isExactly(one.text, 'Hello world')
@@ -308,7 +308,7 @@ category('Insertion and Event Shortcuts', () => {
     })
 
     test('shortcut hover text component', () => {
-        const one = hover`${'test'}Hello world`.json()
+        const one = hover`${'test'} Hello world`.json()
         isComponent(one)
         isTextComponent(one)
         a.isExactly(one.text, 'Hello world')
@@ -317,7 +317,7 @@ category('Insertion and Event Shortcuts', () => {
     })
 
     test('shortcut hover item text component', () => {
-        const one = item`${'{"name":"hello"}'}Hello world`.json()
+        const one = item`${'{"name":"hello"}'} Hello world`.json()
         isComponent(one)
         isTextComponent(one)
         a.isExactly(one.text, 'Hello world')
@@ -326,7 +326,7 @@ category('Insertion and Event Shortcuts', () => {
     })
 
     test('shortcut hover entity text component', () => {
-        const one = entity`${'{"name":"hello"}'}Hello world`.json()
+        const one = entity`${'{"name":"hello"}'} Hello world`.json()
         isComponent(one)
         isTextComponent(one)
         a.isExactly(one.text, 'Hello world')
@@ -335,7 +335,7 @@ category('Insertion and Event Shortcuts', () => {
     })
 
     test('shortcut hover achievement text component', () => {
-        const one = achievement`${'test'}Hello world`.json()
+        const one = achievement`${'test'} Hello world`.json()
         isComponent(one)
         isTextComponent(one)
         a.isExactly(one.text, 'Hello world')

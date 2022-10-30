@@ -729,12 +729,6 @@ export function color(strings: TemplateStringsArray, ...tags: (string | Componen
     return c(strings, ...tags).color(color as ChatColor)
 }
 
-export function insert(strings: TemplateStringsArray, ...tags: (string | ComponentBuilder)[]): ComponentBuilder {
-    const insertion = tags.shift()
-    if (insertion == null || insertion instanceof ComponentBuilder) return c(strings, ...tags)
-    return c(strings, ...tags).insertion(insertion)
-}
-
 export function bold(strings: TemplateStringsArray, ...tags: (string | ComponentBuilder)[]): ComponentBuilder {
     return c(strings, ...tags).bold()
 }
@@ -759,56 +753,163 @@ export function reset(strings: TemplateStringsArray, ...tags: (string | Componen
     return c(strings, ...tags).reset()
 }
 
-export function link(strings: TemplateStringsArray, ...tags: (string | ComponentBuilder)[]): ComponentBuilder {
-    const url = tags.shift()
+function isTemplateStringsArray(input: unknown): asserts input is TemplateStringsArray {
+    // please work
+}
+
+export function insert(strings: TemplateStringsArray, insertion: string, ...tags: (string | ComponentBuilder)[]): ComponentBuilder {
+    if (insertion == null) return c(strings, ...tags)
+    else if (strings[0] === '' && strings[1].startsWith(' ')) {
+        const strs = [...strings]
+        strs[1] = strs[1].substring(1)
+        strs.shift()
+        ;(strs as any).raw = strings.raw
+        isTemplateStringsArray(strs)
+        return c(strs, ...tags).insertion(insertion)
+    }
+    return c(strings, ...tags).insertion(insertion)
+}
+
+export function link(strings: TemplateStringsArray, url: string, ...tags: (string | ComponentBuilder)[]): ComponentBuilder {
+    if (url == null) url = ''
+    else if (strings[0] === '' && strings[1].startsWith(' ')) {
+        const strs = [...strings]
+        strs[1] = strs[1].substring(1)
+        strs.shift()
+        ;(strs as any).raw = strings.raw
+        isTemplateStringsArray(strs)
+        return c(strs, ...tags).clickEvent('open_url', url)
+    }
     return c(strings, ...tags).clickEvent('open_url', url)
 }
 
-export function cmd(strings: TemplateStringsArray, ...tags: (string | ComponentBuilder)[]): ComponentBuilder {
-    const command = tags.shift()
+export function cmd(strings: TemplateStringsArray, command: string, ...tags: (string | ComponentBuilder)[]): ComponentBuilder {
+    if (command == null) command = ''
+    else if (strings[0] === '' && strings[1].startsWith(' ')) {
+        const strs = [...strings]
+        strs[1] = strs[1].substring(1)
+        strs.shift()
+        ;(strs as any).raw = strings.raw
+        isTemplateStringsArray(strs)
+        return c(strs, ...tags).clickEvent('run_command', command)
+    }
     return c(strings, ...tags).clickEvent('run_command', command)
 }
 
-export function suggest(strings: TemplateStringsArray, ...tags: (string | ComponentBuilder)[]): ComponentBuilder {
-    const command = tags.shift()
+export function suggest(strings: TemplateStringsArray, command: string, ...tags: (string | ComponentBuilder)[]): ComponentBuilder {
+    if (command == null) command = ''
+    else if (strings[0] === '' && strings[1].startsWith(' ')) {
+        const strs = [...strings]
+        strs[1] = strs[1].substring(1)
+        strs.shift()
+        ;(strs as any).raw = strings.raw
+        isTemplateStringsArray(strs)
+        return c(strs, ...tags).clickEvent('suggest_command', command)
+    }
     return c(strings, ...tags).clickEvent('suggest_command', command)
 }
 
 export function page(strings: TemplateStringsArray, index: number, ...tags: (string | ComponentBuilder)[]): ComponentBuilder {
+    if (index == null) index = 1
+    else if (strings[0] === '' && strings[1].startsWith(' ')) {
+        const strs = [...strings]
+        strs[1] = strs[1].substring(1)
+        strs.shift()
+        ;(strs as any).raw = strings.raw
+        isTemplateStringsArray(strs)
+        return c(strs, ...tags).clickEvent('change_page', index)
+    }
     return c(strings, ...tags).clickEvent('change_page', index)
 }
 
-export function copy(strings: TemplateStringsArray, ...tags: (string | ComponentBuilder)[]): ComponentBuilder {
-    const text = tags.shift()
+export function copy(strings: TemplateStringsArray, text: string,  ...tags: (string | ComponentBuilder)[]): ComponentBuilder {
+    if (text == null) text = ''
+    else if (strings[0] === '' && strings[1].startsWith(' ')) {
+        const strs = [...strings]
+        strs[1] = strs[1].substring(1)
+        strs.shift()
+        ;(strs as any).raw = strings.raw
+        isTemplateStringsArray(strs)
+        return c(strs, ...tags).clickEvent('copy_to_clipboard', text)
+    }
     return c(strings, ...tags).clickEvent('copy_to_clipboard', text)
 }
 
-export function twitch(strings: TemplateStringsArray, ...tags: (string | ComponentBuilder)[]): ComponentBuilder {
-    const channel = tags.shift()
-    return c(strings, ...tags).clickEvent('twitch_user_info', channel)
+export function twitch(strings: TemplateStringsArray, user: string, ...tags: (string | ComponentBuilder)[]): ComponentBuilder {
+    if (user == null) user = ''
+    else if (strings[0] === '' && strings[1].startsWith(' ')) {
+        const strs = [...strings]
+        strs[1] = strs[1].substring(1)
+        strs.shift()
+        ;(strs as any).raw = strings.raw
+        isTemplateStringsArray(strs)
+        return c(strs, ...tags).clickEvent('twitch_user_info', user)
+    }
+    return c(strings, ...tags).clickEvent('twitch_user_info', user)
 }
 
-export function file(strings: TemplateStringsArray, ...tags: (string | ComponentBuilder)[]): ComponentBuilder {
-    const path = tags.shift()
+export function file(strings: TemplateStringsArray, path: string, ...tags: (string | ComponentBuilder)[]): ComponentBuilder {
+    if (path == null) path = ''
+    else if (strings[0] === '' && strings[1].startsWith(' ')) {
+        const strs = [...strings]
+        strs[1] = strs[1].substring(1)
+        strs.shift()
+        ;(strs as any).raw = strings.raw
+        isTemplateStringsArray(strs)
+        return c(strs, ...tags).clickEvent('open_file', path)
+    }
     return c(strings, ...tags).clickEvent('open_file', path)
 }
 
-export function hover(strings: TemplateStringsArray, ...tags: (string | ComponentBuilder)[]): ComponentBuilder {
-    const text = tags.shift()
+export function hover(strings: TemplateStringsArray, text: string | ComponentBuilder, ...tags: (string | ComponentBuilder)[]): ComponentBuilder {
+    if (text == null) text = ''
+    else if (strings[0] === '' && strings[1].startsWith(' ')) {
+        const strs = [...strings]
+        strs[1] = strs[1].substring(1)
+        strs.shift()
+        ;(strs as any).raw = strings.raw
+        isTemplateStringsArray(strs)
+        return c(strs, ...tags).hoverEvent('show_text', text)
+    }
     return c(strings, ...tags).hoverEvent('show_text', text)
 }
 
-export function item(strings: TemplateStringsArray, ...tags: (string | ComponentBuilder)[]): ComponentBuilder {
-    const item = tags.shift()
+export function item(strings: TemplateStringsArray, item: string, ...tags: (string | ComponentBuilder)[]): ComponentBuilder {
+    if (item == null) item = ''
+    else if (strings[0] === '' && strings[1].startsWith(' ')) {
+        const strs = [...strings]
+        strs[1] = strs[1].substring(1)
+        strs.shift()
+        ;(strs as any).raw = strings.raw
+        isTemplateStringsArray(strs)
+        return c(strs, ...tags).hoverEvent('show_item', item)
+    }
     return c(strings, ...tags).hoverEvent('show_item', item)
 }
 
-export function entity(strings: TemplateStringsArray, ...tags: (string | ComponentBuilder)[]): ComponentBuilder {
-    const entity = tags.shift()
+export function entity(strings: TemplateStringsArray, entity: string, ...tags: (string | ComponentBuilder)[]): ComponentBuilder {
+    if (entity == null) entity = ''
+    else if (strings[0] === '' && strings[1].startsWith(' ')) {
+        const strs = [...strings]
+        strs[1] = strs[1].substring(1)
+        strs.shift()
+        ;(strs as any).raw = strings.raw
+        isTemplateStringsArray(strs)
+        return c(strs, ...tags).hoverEvent('show_entity', entity)
+    }
     return c(strings, ...tags).hoverEvent('show_entity', entity)
 }
 
-export function achievement(strings: TemplateStringsArray, ...tags: (string | ComponentBuilder)[]): ComponentBuilder {
-    const achievement = tags.shift()
+export function achievement(strings: TemplateStringsArray, achievement: string, ...tags: (string | ComponentBuilder)[]): ComponentBuilder {
+    if (achievement == null) achievement = ''
+    else if (strings[0] === '' && strings[1].startsWith(' ')) {
+        const strs = [...strings]
+        strs[1] = strs[1].substring(1)
+        strs.shift()
+        ;(strs as any).raw = strings.raw
+        isTemplateStringsArray(strs)
+        return c(strs, ...tags).hoverEvent('show_achievement', achievement)
+
+    }
     return c(strings, ...tags).hoverEvent('show_achievement', achievement)
 }
